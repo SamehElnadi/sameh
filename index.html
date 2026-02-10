@@ -2,232 +2,289 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>اضحك 😂</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
   margin:0;
-  font-family:Tahoma,Arial;
-  background:radial-gradient(circle at top, #4b1c6b, #12001e);
+  font-family:Arial, sans-serif;
+  background:#0f0f0f;
   color:#fff;
-  min-height:200vh;
-  overflow-x:hidden;
 }
 
 /* ===== البار العلوي ===== */
-.top-bar{
-  position:fixed;
-  top:0;left:0;
-  width:100%;
-  height:60px;
-  background:#2a083f;
+.navbar{
   display:flex;
-  justify-content:space-around;
+  justify-content:space-between;
   align-items:center;
-  box-shadow:0 0 25px gold;
-  transition:top 0.4s;
-  z-index:999;
+  padding:15px 20px;
+  background:#111;
+  box-shadow:0 2px 10px #000;
 }
-.top-bar.hide{ top:-80px; }
-.top-bar a{
-  color:gold;
-  text-decoration:none;
+
+.navbar .logo{
   font-weight:bold;
+  font-size:20px;
 }
+
+.navbar a{
+  color:#fff;
+  text-decoration:none;
+  margin-left:15px;
+  opacity:.8;
+}
+.navbar a:hover{opacity:1}
 
 /* ===== الكروت ===== */
-.container{ padding-top:90px; }
 .cards{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
   gap:20px;
-  padding:20px;
+  padding:30px;
 }
+
 .card{
-  height:160px;
-  border-radius:22px;
-  background:#4b1c6b;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:gold;
-  font-size:22px;
-  font-weight:bold;
-  box-shadow:0 0 30px gold;
-  transition:0.3s;
-}
-.card.active{ cursor:pointer; }
-.card.active:hover{ transform:scale(1.06); }
-.card.disabled{
-  opacity:.35;
-  box-shadow:none;
-}
-
-/* ===== النوافذ ===== */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.7);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000;
-}
-.modal-content{
-  background:#4b1c6b;
-  padding:20px;
+  position:relative;
   border-radius:20px;
-  width:90%;
-  max-width:400px;
-  box-shadow:0 0 40px gold;
-  text-align:center;
-}
-input{
-  width:100%;
-  padding:12px;
-  border-radius:10px;
-  border:none;
-  margin-bottom:15px;
-}
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:gold;
-  font-size:18px;
-  font-weight:bold;
+  overflow:hidden;
   cursor:pointer;
+  box-shadow:0 0 25px #000;
+  transition:.3s;
 }
-button:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
-.back{
-  margin-top:10px;
-  background:none;
-  border:2px solid gold;
-  color:gold;
+.card:hover{transform:scale(1.05)}
+
+.card img{
+  width:100%;
+  height:160px;
+  object-fit:cover;
 }
 
-/* ===== انفجار ===== */
-.particle{
-  position:fixed;
-  width:6px;
-  height:6px;
-  background:gold;
-  border-radius:50%;
-  pointer-events:none;
+.card p{
+  position:absolute;
+  bottom:10px;
+  left:10px;
+  font-weight:bold;
+  background:rgba(0,0,0,.5);
+  padding:5px 10px;
+  border-radius:10px;
+}
+
+/* ===== صفحة اللعبة ===== */
+.game{
+  display:none;
+  text-align:center;
+  padding:40px;
+}
+
+.game input{
+  width:80%;
+  max-width:400px;
+  padding:15px;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
+}
+
+.game button{
+  margin-top:15px;
+  padding:15px 30px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+  background:linear-gradient(45deg,#ff0080,#ffb300);
+  color:#000;
+  box-shadow:0 0 20px #ff0080;
+}
+
+.result{
+  margin-top:25px;
+  font-size:24px;
+  animation:pop .4s;
+}
+
+@keyframes pop{
+  from{transform:scale(.7);opacity:0}
+  to{transform:scale(1);opacity:1}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ===== أصوات ===== -->
-<audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_38c7c5d0b5.mp3"></audio>
-<audio id="laughSound" src="https://cdn.pixabay.com/audio/2022/03/24/audio_5f4b88db7a.mp3"></audio>
-
-<!-- ===== البار ===== -->
-<div class="top-bar">
-  <a href="#" onclick="openComing()">صفحتك</a>
-  <a href="#" onclick="openComing()">اشتراك</a>
-  <a href="https://t.me/yourgroup" target="_blank">تواصل</a>
-</div>
-
-<!-- ===== الكروت ===== -->
-<div class="container">
-  <div class="cards">
-    <div class="card active" onclick="openLaugh(event)">😂 اضحك</div>
-    <div class="card disabled">قريبًا</div>
-    <div class="card disabled">قريبًا</div>
-    <div class="card disabled">قريبًا</div>
+<!-- ===== NAV ===== -->
+<div class="navbar">
+  <div class="logo">Dogcat</div>
+  <div>
+    <a href="#">صفحتك (قريبًا)</a>
+    <a href="#">اشتراك (قريبًا)</a>
+    <a href="https://t.me/">تواصل</a>
   </div>
 </div>
 
-<!-- ===== نافذة اضحك ===== -->
-<div class="modal" id="laughModal">
-  <div class="modal-content">
-    <input id="laughInput" placeholder="اكتب أي جملة">
-    <button id="laughBtn" onclick="laugh()">نتيجة</button>
-    <div id="result" style="margin:15px;font-size:18px"></div>
-    <button class="back" onclick="closeAll()">رجوع</button>
+<!-- ===== CARDS ===== -->
+<div class="cards" id="cards">
+  <div class="card" onclick="openGame()">
+    <img src="images/card-mini-games.png">
+    <p>😂 اضحك</p>
+  </div>
+
+  <div class="card">
+    <img src="images/card-board.png">
+    <p>قريبًا</p>
+  </div>
+
+  <div class="card">
+    <img src="images/card-bonus.png">
+    <p>قريبًا</p>
+  </div>
+
+  <div class="card">
+    <img src="images/card-dragon.png">
+    <p>قريبًا</p>
   </div>
 </div>
 
-<!-- ===== قريبًا ===== -->
-<div class="modal" id="comingModal">
-  <div class="modal-content">
-    <h2>قريبًا… ⏳</h2>
-    <p>الميزة دي تحت التطوير</p>
-    <button class="back" onclick="closeAll()">رجوع</button>
-  </div>
+<!-- ===== GAME ===== -->
+<div class="game" id="game">
+  <h2>قول أي جملة 😈</h2>
+  <input id="laughInput" placeholder="اكتب هنا">
+  <br>
+  <button id="laughBtn" onclick="laugh()">اضحك</button>
+  <div class="result" id="result"></div>
 </div>
+
+<!-- ===== AUDIO ===== -->
+<audio id="laughSound">
+  <source src="laugh.mp3" type="audio/mpeg">
+</audio>
 
 <script>
-/* ===== أصوات ===== */
-function playClick(){ document.getElementById('clickSound').play(); }
-function playLaugh(){ document.getElementById('laughSound').play(); }
-
-/* ===== البار ===== */
-let last=0;
-const bar=document.querySelector('.top-bar');
-window.addEventListener('scroll',()=>{
-  let c=pageYOffset;
-  c>last?bar.classList.add('hide'):bar.classList.remove('hide');
-  last=c;
-});
-
-/* ===== فتح النوافذ ===== */
-function openLaugh(e){
-  playClick();
-  explode(e.clientX,e.clientY);
-  document.getElementById('laughModal').style.display='flex';
+const laughReplies = [
+"😂 ضحكتني وربنا","🤣 جامدة دي","😆 دي محتاجة شاي",
+"😂 دمك خفيف","🤣 مش قادر","😹 دي خطر",
+"😂 قول تاني","🤣 لا تعليق","😆 فظيع",
+"😂 ههههه","🤣 وقعتني","😹 جامدة قوي",
+"😂 دمك سم","🤣 مستحيل","😆 يا سلام",
+"😂 موتني ضحك","🤣 خطر رسمي","😹 الله",
+"😂 لا بجد","🤣 استغفر الله",
+"😆 مش طبيعي","😂 ضحك هستيري",
+"🤣 دمك رهيب","😹 خلاص",
+"😂 جامد","🤣 هعيط",
+"😆 وقعت","😂 ده انت خطر"
+"😂 ضحكتني وربنا",
+"🤣 جامدة دي",
+"😆 دي محتاجة كوباية شاي",
+"😂 ضحك بدون سبب",
+"🤣 أنا مش مستعد",
+"😹 دي هتدخلني النار",
+"😂 قول تاني",
+"🤣 دمك خفيف زيادة",
+"😆 بلاش كده",
+"😂 مش قادر",
+"🤣 يا ساتر",
+"😹 دي خطر",
+"😂 هات غيرها",
+"🤣 مش طبيعي",
+"😆 استغفر الله",
+"😂 ضحك هستيري",
+"🤣 الدم خفيف",
+"😹 وقعتني",
+"😂 لا لا كفاية",
+"🤣 مجنونة",
+"😆 دمك لذيذ",
+"😂 دمك سم",
+"🤣 لا تعليق",
+"😹 دي صعبة",
+"😂 مش متوقعها",
+"🤣 موتني ضحك",
+"😆 لا بجد",
+"😂 حاضر",
+"🤣 ربنا يسامحك",
+"😹 دي طلعت فجأة",
+"😂 فاهمك",
+"🤣 حد يلحقني",
+"😆 كفاية كده",
+"😂 ضحك رسمي",
+"🤣 دي جديدة",
+"😹 فشيخة",
+"😂 مش قادر أمسك نفسي",
+"🤣 جامد فشخ",
+"😆 لا يعم",
+"😂 هو ده الكلام",
+"🤣 قفلتها",
+"😹 الله",
+"😂 دمك خفيف أوي",
+"🤣 مش هينفع",
+"😆 يالهوي",
+"😂 خلاص",
+"🤣 سكر",
+"😹 وقعت",
+"😂 وحياة أمك",
+"🤣 لا مؤاخذة",
+"😆 استنى",
+"😂 ههههه",
+"🤣 دي قتلتني",
+"😹 ضحك رسمي",
+"😂 تمام",
+"🤣 خلصانة",
+"😆 ياعم",
+"😂 مش طبيعي",
+"🤣 هعيط",
+"😹 دي جامدة",
+"😂 حلوة",
+"🤣 فكرتني",
+"😆 سيبك",
+"😂 خلاصنا",
+"🤣 كده كتير",
+"😹 لا يعم بقى",
+"😂 استوب",
+"🤣 بلاش",
+"😆 دماغك",
+"😂 شكلك",
+"🤣 لا بجد",
+"😹 فظيع",
+"😂 جامد",
+"🤣 وقعتني الأرض",
+"😆 خلاص بقى",
+"😂 مضحك",
+"🤣 دمك رهيب",
+"😹 يا سلام",
+"😂 مش طبيعي خالص",
+"🤣 لا أستحمل",
+"😆 جامد",
+"😂 ده انت خطر",
+"🤣 كفاية ضحك",
+"😹 مش قادر أتنفس",
+"😂 دي حلوة قوي",
+"🤣 يا نهار أبيض",
+"😆 استغفر الله العظيم"
+];
+function openGame(){
+  document.getElementById("cards").style.display="none";
+  document.getElementById("game").style.display="block";
 }
-function openComing(){
-  playClick();
-  document.getElementById('comingModal').style.display='flex';
-}
-function closeAll(){
-  playClick();
-  document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
+
+function playLaugh(){
+  document.getElementById("laughSound").play();
 }
 
-/* ===== الضحك ===== */
 function laugh(){
-  const input = document.getElementById("laughInput");
-  const btn = document.getElementById("laughBtn");
+  const input=document.getElementById("laughInput");
+  const btn=document.getElementById("laughBtn");
 
   if(input.value.trim()==="") return;
 
   playLaugh();
-  document.getElementById("result").innerHTML="😂 ضحكتك جاية من القلب";
+
+  const reply=laughReplies[Math.floor(Math.random()*laughReplies.length)];
+  document.getElementById("result").innerText=reply;
 
   input.value="";
   btn.disabled=true;
 
-  setTimeout(()=>{
-    btn.disabled=false;
-  },3000);
-}
-
-/* ===== انفجار ===== */
-function explode(x,y){
-  for(let i=0;i<20;i++){
-    let p=document.createElement("div");
-    p.className="particle";
-    p.style.left=x+"px";
-    p.style.top=y+"px";
-    document.body.appendChild(p);
-    let dx=(Math.random()-0.5)*200;
-    let dy=(Math.random()-0.5)*200;
-    p.animate(
-      [{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px)`}],
-      {duration:600}
-    );
-    setTimeout(()=>p.remove(),600);
-  }
+  setTimeout(()=>{btn.disabled=false},2500);
 }
 </script>
 
