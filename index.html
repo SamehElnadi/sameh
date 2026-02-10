@@ -6,146 +6,162 @@
 <title>Mini Games</title>
 
 <style>
-body {
-  margin: 0;
-  height: 100vh;
-  background: radial-gradient(circle at top, #2b0b45, #12051f);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  height:100vh;
+  background:radial-gradient(circle at top,#2b0b45,#12051f);
+  font-family:Arial, sans-serif;
+  color:gold;
+  overflow:hidden;
 }
 
-/* الكارت */
-.card {
-  width: 85%;
-  max-width: 340px;
-  height: 180px;
-  background: linear-gradient(180deg, #4b1c6b, #2b0b45);
-  border-radius: 22px;
-  border: 3px solid gold;
-  box-shadow: 0 0 15px gold, inset 0 0 10px rgba(255,215,0,.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: gold;
-  font-size: 22px;
-  letter-spacing: 2px;
-  cursor: pointer;
-  transition: transform .15s ease;
+/* الكروت */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  padding:20px;
 }
 
-.card:active { transform: scale(.95); }
+.card{
+  height:140px;
+  background:linear-gradient(180deg,#4b1c6b,#2b0b45);
+  border-radius:22px;
+  border:2px solid gold;
+  box-shadow:0 0 15px gold;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  cursor:pointer;
+}
+.card:active{transform:scale(.95)}
 
-/* popup عام */
-.popup {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.75);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 99;
+/* Popup */
+.popup{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.8);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
 }
 
-.box {
-  background: linear-gradient(180deg, #3b145a, #1a062b);
-  border: 2px solid gold;
-  border-radius: 20px;
-  width: 80%;
-  max-width: 300px;
-  padding: 20px;
-  text-align: center;
-  color: gold;
-  box-shadow: 0 0 25px gold;
-  animation: pop .3s ease;
+.box{
+  width:90%;
+  max-width:360px;
+  background:linear-gradient(180deg,#3b145a,#1a062b);
+  border:2px solid gold;
+  border-radius:20px;
+  padding:15px;
+  box-shadow:0 0 25px gold;
+  animation:pop .3s ease;
+}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+input,button{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-top:8px;
+  font-size:16px;
 }
 
-@keyframes pop {
-  from {transform: scale(.7); opacity:0;}
-  to {transform: scale(1); opacity:1;}
+button{
+  background:gold;
+  color:#2b0b45;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-.btn {
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 12px;
-  border: none;
-  width: 100%;
-  font-size: 16px;
-  cursor: pointer;
+#reply{
+  margin-top:10px;
+  text-align:center;
+  min-height:40px;
 }
-
-.install { background: gold; color: #2b0b45; }
-.skip { background: transparent; color: gold; border: 1px solid gold; }
-
-/* صوت */
-audio { display:none; }
 </style>
 </head>
 
 <body>
 
-<div class="card" onclick="openGame()">MINI GAMES</div>
+<div class="cards">
+  <div class="card" onclick="openPopup()">MINI</div>
+  <div class="card" onclick="openPopup()">BOARD</div>
+  <div class="card" onclick="openPopup()">BONUS</div>
+  <div class="card" onclick="openPopup()">VIP</div>
+</div>
 
-<!-- Popup التثبيت -->
-<div class="popup" id="installPopup">
+<div class="popup" id="popup">
   <div class="box">
-    <h3>📲 حمّل التطبيق</h3>
-    <p>تجربة أسرع بدون متصفح</p>
-    <button class="btn install" onclick="installApp()">تثبيت</button>
-    <button class="btn skip" onclick="skipInstall()">تخطي</button>
+    <input id="userText" placeholder="اكتب أي جملة…" />
+    <button onclick="getReply()">نتيجة</button>
+    <div id="reply"></div>
+    <button onclick="closePopup()" style="background:none;color:gold;border:1px solid gold">رجوع</button>
   </div>
 </div>
 
-<!-- صوت -->
 <audio id="clickSound">
   <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3">
 </audio>
 
 <script>
-let deferredPrompt;
+const replies = [
+"الجملة دي محتاجة قعدة هادية ☕",
+"واضح إنك بتفكر زيادة شوية 😅",
+"الكلام ده لو اتقال بدري كان فرق",
+"حاسس إن في فكرة حلوة مستخبية هنا",
+"دي بداية حاجة كبيرة 👀",
+"مش هكدب عليك… غريبة شوية",
+"الكلام ده يتكتب ويتقري تاني",
+"واضح إنك قريب توصل",
+"الجملة دي ليها كذا معنى",
+"دي مش صدفة أبدا",
+"فيها إحساس مختلف",
+"لو ركزت شوية هتفهمها أكتر",
+"الجملة دي مش عادية",
+"واضح إنك صاحي دماغك",
+"دي محتاجة تجربة مش كلام",
+"حاسس إنك فاهم بس متردد",
+"لو سكتت شوية هتوضح",
+"الجملة دي جت في وقتها",
+"واضح إنك شايل حاجة",
+"الكلام ده مش بسيط",
+"فيها فضول",
+"دي بداية حوار",
+"لو بصتلها من زاوية تانية",
+"واضح إنك بتجرب",
+"فيها طاقة غريبة",
+"الجملة دي ليها وزن",
+"مش أي حد يقول كده",
+"حاسس إنك صريح",
+"الكلام ده مش عشوائي",
+"دي فكرة لسه طالعة"
+];
 
-// إظهار Popup أول فتح فقط
-window.onload = () => {
-  if (!localStorage.getItem("skipInstall")) {
-    document.getElementById("installPopup").style.display = "flex";
-  }
-};
+let lastReplies = [];
 
-// التقاط حدث التثبيت
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-});
-
-// تثبيت
-function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      deferredPrompt = null;
-      closeInstall();
-    });
-  } else {
-    alert("استخدم Add to Home Screen من المتصفح");
-  }
-}
-
-// تخطي
-function skipInstall() {
-  localStorage.setItem("skipInstall", "1");
-  closeInstall();
-}
-
-function closeInstall() {
-  document.getElementById("installPopup").style.display = "none";
-}
-
-// لعبة وهمية
-function openGame() {
+function openPopup(){
   document.getElementById("clickSound").play();
+  document.getElementById("popup").style.display="flex";
+}
+
+function closePopup(){
+  document.getElementById("popup").style.display="none";
+}
+
+function getReply(){
+  let r;
+  do{
+    r = replies[Math.floor(Math.random()*replies.length)];
+  }while(lastReplies.includes(r));
+
+  lastReplies.push(r);
+  if(lastReplies.length>5) lastReplies.shift();
+
+  document.getElementById("reply").innerText = r;
 }
 </script>
 
