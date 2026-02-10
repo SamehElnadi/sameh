@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>صفحة تجريبية</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>اكتب أي حاجة 😄</h2>
+    <input id="text" placeholder="اكتب هنا">
+    <button onclick="reply()">نتيجة</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const replies = [
+      "😂 اختيار غريب",
+      "تفكير عميق جدًا",
+      "ده محتاج شاي",
+      "انت كده تمام",
+      "ركز شوية بس"
+    ];
+
+    function reply() {
+      const r = replies[Math.floor(Math.random() * replies.length)];
+      document.getElementById("result").innerText = r;
+    }
+  </script>
+</body>
+</html>
