@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Mini Games</title>
+
+<title>Dogcat Mini</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2b0b45">
 
 <style>
 *{box-sizing:border-box}
@@ -16,7 +20,6 @@ body{
   overflow:hidden;
 }
 
-/* الكروت */
 .cards{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -29,7 +32,7 @@ body{
   background:linear-gradient(180deg,#4b1c6b,#2b0b45);
   border-radius:22px;
   border:2px solid gold;
-  box-shadow:0 0 15px gold;
+  box-shadow:0 0 18px gold;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -38,7 +41,6 @@ body{
 }
 .card:active{transform:scale(.95)}
 
-/* Popup */
 .popup{
   position:fixed;
   inset:0;
@@ -57,9 +59,7 @@ body{
   border-radius:20px;
   padding:15px;
   box-shadow:0 0 25px gold;
-  animation:pop .3s ease;
 }
-@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
 
 input,button{
   width:100%;
@@ -74,7 +74,6 @@ button{
   background:gold;
   color:#2b0b45;
   font-weight:bold;
-  cursor:pointer;
 }
 
 #reply{
@@ -118,50 +117,28 @@ const replies = [
 "الكلام ده يتكتب ويتقري تاني",
 "واضح إنك قريب توصل",
 "الجملة دي ليها كذا معنى",
-"دي مش صدفة أبدا",
-"فيها إحساس مختلف",
-"لو ركزت شوية هتفهمها أكتر",
-"الجملة دي مش عادية",
-"واضح إنك صاحي دماغك",
-"دي محتاجة تجربة مش كلام",
-"حاسس إنك فاهم بس متردد",
-"لو سكتت شوية هتوضح",
-"الجملة دي جت في وقتها",
-"واضح إنك شايل حاجة",
-"الكلام ده مش بسيط",
-"فيها فضول",
-"دي بداية حوار",
-"لو بصتلها من زاوية تانية",
-"واضح إنك بتجرب",
-"فيها طاقة غريبة",
-"الجملة دي ليها وزن",
-"مش أي حد يقول كده",
-"حاسس إنك صريح",
-"الكلام ده مش عشوائي",
-"دي فكرة لسه طالعة"
+"دي مش صدفة أبدا"
 ];
 
-let lastReplies = [];
+let last=[];
 
 function openPopup(){
-  document.getElementById("clickSound").play();
-  document.getElementById("popup").style.display="flex";
+  clickSound.play();
+  popup.style.display="flex";
 }
 
 function closePopup(){
-  document.getElementById("popup").style.display="none";
+  popup.style.display="none";
 }
 
 function getReply(){
   let r;
   do{
-    r = replies[Math.floor(Math.random()*replies.length)];
-  }while(lastReplies.includes(r));
-
-  lastReplies.push(r);
-  if(lastReplies.length>5) lastReplies.shift();
-
-  document.getElementById("reply").innerText = r;
+    r=replies[Math.floor(Math.random()*replies.length)];
+  }while(last.includes(r));
+  last.push(r);
+  if(last.length>5) last.shift();
+  reply.innerText=r;
 }
 </script>
 
