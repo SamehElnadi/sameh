@@ -1,40 +1,175 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>صفحة تجريبية</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .box {
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-    }
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-    }
-    button {
-      padding: 10px 20px;
-      cursor: pointer;
-    }
-    #result {
-      margin-top: 15px;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>AI Fun 🔥</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  height:100vh;
+  font-family:Segoe UI,Arial;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#1d2671,#c33764);
+  transition:background 0.5s;
+  overflow:hidden;
+  color:#fff;
+}
+.card{
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(12px);
+  padding:25px;
+  border-radius:22px;
+  width:90%;
+  max-width:420px;
+  text-align:center;
+  box-shadow:0 25px 50px rgba(0,0,0,.5);
+}
+input{
+  width:100%;
+  padding:14px;
+  border-radius:14px;
+  border:none;
+  margin:15px 0;
+  font-size:16px;
+}
+button{
+  border:none;
+  padding:14px 26px;
+  border-radius:30px;
+  font-size:16px;
+  cursor:pointer;
+  background:linear-gradient(135deg,#ff9800,#ff5722);
+  color:#fff;
+  box-shadow:0 10px 20px rgba(0,0,0,.4);
+}
+button:active{transform:scale(.92)}
+#result{
+  margin-top:18px;
+  font-size:18px;
+  min-height:40px;
+  animation:fade .4s;
+}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+.controls{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:15px;
+}
+canvas{
+  position:fixed;
+  top:0;left:0;
+  pointer-events:none;
+}
+</style>
 </head>
+
 <body>
-  <div class="box">
-    <h2>اكتب أي حاجة 😄</h2>
+
+<canvas id="fx"></canvas>
+
+<div class="card">
+  <h2>اكتب أي حاجة 😎</h2>
+  <input id="text" placeholder="جملة، فكرة، أي كلام">
+  <button onclick="go()">طلّع النتيجة</button>
+
+  <div id="result"></div>
+
+  <div class="controls">
+    <button onclick="toggleMusic()">🎵</button>
+    <button onclick="speak()">🔊</button>
+  </div>
+</div>
+
+<audio id="pop" src="https://assets.mixkit.co/sfx/preview/mixkit-bubble-pop-up-alert-notification-2357.mp3"></audio>
+<audio id="music" loop src="https://assets.mixkit.co/music/preview/mixkit-lofi-chill-medium-245.mp3"></audio>
+
+<script>
+const starts=["بصراحة،","من الآخر،","خليني أقولك،","بص بقى،","على فكرة،"];
+const mids=["الكلام ده","الجملة دي","اللي كتبته","الفكرة دي","اللي في بالك"];
+const ends=["يضحك شوية 😅","غريب بس مفهوم.","مش بسيط خالص.","محتاج إعادة تفكير.","ليه معنى تاني."];
+
+function r(a){return a[Math.floor(Math.random()*a.length)]}
+
+function go(){
+  document.getElementById("pop").play();
+  changeBg();
+  let hist=JSON.parse(localStorage.getItem("h")||"[]");
+  let reply,tries=0;
+  do{
+    reply=`${r(starts)} ${r(mids)} ${r(ends)}`;
+    tries++;
+  }while(hist.includes(reply)&&tries<10);
+  hist.push(reply); if(hist.length>5)hist.shift();
+  localStorage.setItem("h",JSON.stringify(hist));
+  document.getElementById("result").innerText=reply;
+  explode();
+}
+
+function speak(){
+  let txt=document.getElementById("result").innerText;
+  if(!txt)return;
+  let u=new SpeechSynthesisUtterance(txt);
+  u.lang="ar-EG";
+  speechSynthesis.speak(u);
+}
+
+let playing=false;
+function toggleMusic(){
+  let m=document.getElementById("music");
+  playing?m.pause():m.play();
+  playing=!playing;
+}
+
+function changeBg(){
+  const colors=[
+    ["#1d2671","#c33764"],
+    ["#0f2027","#203a43"],
+    ["#41295a","#2F0743"],
+    ["#134E5E","#71B280"]
+  ];
+  let c=r(colors);
+  document.body.style.background=`linear-gradient(135deg,${c[0]},${c[1]})`;
+}
+
+/* انفجار */
+const canvas=document.getElementById("fx");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth;canvas.height=innerHeight;
+let parts=[];
+function explode(){
+  for(let i=0;i<35;i++){
+    parts.push({
+      x:innerWidth/2,y:innerHeight/2,
+      vx:(Math.random()-.5)*6,
+      vy:(Math.random()-.5)*6,
+      l:30
+    });
+  }
+}
+function anim(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  parts.forEach((p,i)=>{
+    ctx.fillStyle="rgba(255,255,255,.8)";
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,3,0,Math.PI*2);
+    ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;p.l--;
+    if(p.l<=0)parts.splice(i,1);
+  });
+  requestAnimationFrame(anim);
+}
+anim();
+onresize=()=>{canvas.width=innerWidth;canvas.height=innerHeight};
+</script>
+
+</body>
+  </html>    <h2>اكتب أي حاجة 😄</h2>
     <input id="text" placeholder="اكتب هنا">
     <button onclick="reply()">نتيجة</button>
     <div id="result"></div>
