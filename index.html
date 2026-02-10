@@ -2,143 +2,232 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-<title>Dogcat Mini</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2b0b45">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اضحك 😂</title>
 
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
-  height:100vh;
-  background:radial-gradient(circle at top,#2b0b45,#12051f);
-  font-family:Arial, sans-serif;
-  color:gold;
-  overflow:hidden;
+  font-family:Tahoma,Arial;
+  background:radial-gradient(circle at top, #4b1c6b, #12001e);
+  color:#fff;
+  min-height:200vh;
+  overflow-x:hidden;
 }
 
+/* ===== البار العلوي ===== */
+.top-bar{
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  height:60px;
+  background:#2a083f;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+  box-shadow:0 0 25px gold;
+  transition:top 0.4s;
+  z-index:999;
+}
+.top-bar.hide{ top:-80px; }
+.top-bar a{
+  color:gold;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+/* ===== الكروت ===== */
+.container{ padding-top:90px; }
 .cards{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:15px;
+  gap:20px;
   padding:20px;
 }
-
 .card{
-  height:140px;
-  background:linear-gradient(180deg,#4b1c6b,#2b0b45);
+  height:160px;
   border-radius:22px;
-  border:2px solid gold;
-  box-shadow:0 0 18px gold;
+  background:#4b1c6b;
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
+  color:gold;
+  font-size:22px;
   font-weight:bold;
-  cursor:pointer;
+  box-shadow:0 0 30px gold;
+  transition:0.3s;
 }
-.card:active{transform:scale(.95)}
+.card.active{ cursor:pointer; }
+.card.active:hover{ transform:scale(1.06); }
+.card.disabled{
+  opacity:.35;
+  box-shadow:none;
+}
 
-.popup{
+/* ===== النوافذ ===== */
+.modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.8);
+  background:rgba(0,0,0,.7);
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:10;
+  z-index:1000;
 }
-
-.box{
-  width:90%;
-  max-width:360px;
-  background:linear-gradient(180deg,#3b145a,#1a062b);
-  border:2px solid gold;
+.modal-content{
+  background:#4b1c6b;
+  padding:20px;
   border-radius:20px;
-  padding:15px;
-  box-shadow:0 0 25px gold;
+  width:90%;
+  max-width:400px;
+  box-shadow:0 0 40px gold;
+  text-align:center;
 }
-
-input,button{
+input{
   width:100%;
-  padding:10px;
+  padding:12px;
   border-radius:10px;
   border:none;
-  margin-top:8px;
-  font-size:16px;
+  margin-bottom:15px;
 }
-
 button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
   background:gold;
-  color:#2b0b45;
+  font-size:18px;
   font-weight:bold;
+  cursor:pointer;
+}
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+.back{
+  margin-top:10px;
+  background:none;
+  border:2px solid gold;
+  color:gold;
 }
 
-#reply{
-  margin-top:10px;
-  text-align:center;
-  min-height:40px;
+/* ===== انفجار ===== */
+.particle{
+  position:fixed;
+  width:6px;
+  height:6px;
+  background:gold;
+  border-radius:50%;
+  pointer-events:none;
 }
 </style>
 </head>
 
 <body>
 
-<div class="cards">
-  <div class="card" onclick="openPopup()">MINI</div>
-  <div class="card" onclick="openPopup()">BOARD</div>
-  <div class="card" onclick="openPopup()">BONUS</div>
-  <div class="card" onclick="openPopup()">VIP</div>
+<!-- ===== أصوات ===== -->
+<audio id="clickSound" src="https://cdn.pixabay.com/audio/2022/03/15/audio_38c7c5d0b5.mp3"></audio>
+<audio id="laughSound" src="https://cdn.pixabay.com/audio/2022/03/24/audio_5f4b88db7a.mp3"></audio>
+
+<!-- ===== البار ===== -->
+<div class="top-bar">
+  <a href="#" onclick="openComing()">صفحتك</a>
+  <a href="#" onclick="openComing()">اشتراك</a>
+  <a href="https://t.me/yourgroup" target="_blank">تواصل</a>
 </div>
 
-<div class="popup" id="popup">
-  <div class="box">
-    <input id="userText" placeholder="اكتب أي جملة…" />
-    <button onclick="getReply()">نتيجة</button>
-    <div id="reply"></div>
-    <button onclick="closePopup()" style="background:none;color:gold;border:1px solid gold">رجوع</button>
+<!-- ===== الكروت ===== -->
+<div class="container">
+  <div class="cards">
+    <div class="card active" onclick="openLaugh(event)">😂 اضحك</div>
+    <div class="card disabled">قريبًا</div>
+    <div class="card disabled">قريبًا</div>
+    <div class="card disabled">قريبًا</div>
   </div>
 </div>
 
-<audio id="clickSound">
-  <source src="https://assets.mixkit.co/sfx/preview/mixkit-game-click-1114.mp3">
-</audio>
+<!-- ===== نافذة اضحك ===== -->
+<div class="modal" id="laughModal">
+  <div class="modal-content">
+    <input id="laughInput" placeholder="اكتب أي جملة">
+    <button id="laughBtn" onclick="laugh()">نتيجة</button>
+    <div id="result" style="margin:15px;font-size:18px"></div>
+    <button class="back" onclick="closeAll()">رجوع</button>
+  </div>
+</div>
+
+<!-- ===== قريبًا ===== -->
+<div class="modal" id="comingModal">
+  <div class="modal-content">
+    <h2>قريبًا… ⏳</h2>
+    <p>الميزة دي تحت التطوير</p>
+    <button class="back" onclick="closeAll()">رجوع</button>
+  </div>
+</div>
 
 <script>
-const replies = [
-"الجملة دي محتاجة قعدة هادية ☕",
-"واضح إنك بتفكر زيادة شوية 😅",
-"الكلام ده لو اتقال بدري كان فرق",
-"حاسس إن في فكرة حلوة مستخبية هنا",
-"دي بداية حاجة كبيرة 👀",
-"مش هكدب عليك… غريبة شوية",
-"الكلام ده يتكتب ويتقري تاني",
-"واضح إنك قريب توصل",
-"الجملة دي ليها كذا معنى",
-"دي مش صدفة أبدا"
-];
+/* ===== أصوات ===== */
+function playClick(){ document.getElementById('clickSound').play(); }
+function playLaugh(){ document.getElementById('laughSound').play(); }
 
-let last=[];
+/* ===== البار ===== */
+let last=0;
+const bar=document.querySelector('.top-bar');
+window.addEventListener('scroll',()=>{
+  let c=pageYOffset;
+  c>last?bar.classList.add('hide'):bar.classList.remove('hide');
+  last=c;
+});
 
-function openPopup(){
-  clickSound.play();
-  popup.style.display="flex";
+/* ===== فتح النوافذ ===== */
+function openLaugh(e){
+  playClick();
+  explode(e.clientX,e.clientY);
+  document.getElementById('laughModal').style.display='flex';
+}
+function openComing(){
+  playClick();
+  document.getElementById('comingModal').style.display='flex';
+}
+function closeAll(){
+  playClick();
+  document.querySelectorAll('.modal').forEach(m=>m.style.display='none');
 }
 
-function closePopup(){
-  popup.style.display="none";
+/* ===== الضحك ===== */
+function laugh(){
+  const input = document.getElementById("laughInput");
+  const btn = document.getElementById("laughBtn");
+
+  if(input.value.trim()==="") return;
+
+  playLaugh();
+  document.getElementById("result").innerHTML="😂 ضحكتك جاية من القلب";
+
+  input.value="";
+  btn.disabled=true;
+
+  setTimeout(()=>{
+    btn.disabled=false;
+  },3000);
 }
 
-function getReply(){
-  let r;
-  do{
-    r=replies[Math.floor(Math.random()*replies.length)];
-  }while(last.includes(r));
-  last.push(r);
-  if(last.length>5) last.shift();
-  reply.innerText=r;
+/* ===== انفجار ===== */
+function explode(x,y){
+  for(let i=0;i<20;i++){
+    let p=document.createElement("div");
+    p.className="particle";
+    p.style.left=x+"px";
+    p.style.top=y+"px";
+    document.body.appendChild(p);
+    let dx=(Math.random()-0.5)*200;
+    let dy=(Math.random()-0.5)*200;
+    p.animate(
+      [{transform:'translate(0,0)'},{transform:`translate(${dx}px,${dy}px)`}],
+      {duration:600}
+    );
+    setTimeout(()=>p.remove(),600);
+  }
 }
 </script>
 
